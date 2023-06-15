@@ -4,6 +4,9 @@ import coursesController from "../controllers/Api/CoursesController.js";
 import AuthController from "../controllers/Api/AuthController.js";
 import DepartmentController from "../controllers/Api/DepartmentController.js";
 import DesignationController from "../controllers/Api/DesignationController.js";
+import EmployeeController from "../controllers/Api/EmployeeController.js";
+
+
 const router = express.Router();
 
 router.post("/login", AuthController.authCheck);
@@ -21,4 +24,5 @@ router.get("/departments", ApiAuth, DepartmentController.get);
 
 router.get("/designations", ApiAuth, DesignationController.get);
 
+router.post("/create-employee", ApiAuth, EmployeeController.create);
 export default router;
