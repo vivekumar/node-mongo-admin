@@ -21,6 +21,8 @@ class CourseController {
     }
     static store = async (req, res) => {
         try {
+
+
             const data = await course(req.body);
 
             const result = data.save();

@@ -16,7 +16,7 @@ class AuthController {
             // Validate user input
             if (!(email && password)) {
                 //res.status(400).send("All input is required");
-                res.status(400).json({ "message": "All input is required", "status": false });
+                return res.status(400).json({ "message": "All input is required", "status": false });
             }
             // Validate if user exist in our database
             const user = await User.findOne({ email });

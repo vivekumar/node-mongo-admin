@@ -8,7 +8,7 @@ import path from "path";
 import web from "./app/routes/web.js";
 import api from "./app/routes/api.js";
 import session from "express-session";
-
+import multer from "multer";
 //import database from "./app/config/database.js"
 var __dirname = path.resolve();
 const app = express();
@@ -22,6 +22,10 @@ app.use(session({
 app.set("view engine", "ejs");
 app.set("views", __dirname + '/app/views');
 app.use(express.static(__dirname + '/public'));
+
+
+//multer file upload code
+const upload = multer({ dest: 'uploads/' });
 
 
 // Body-parser middleware
