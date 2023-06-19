@@ -8,6 +8,9 @@ import EmployeeController from "../controllers/Api/EmployeeController.js";
 import multer from "multer";
 import upload from "../middleware/multerMiddleware.js"
 import LeaveController from "../controllers/Api/LeaveController.js";
+import HolidayController from "../controllers/Api/HolidayController.js";
+
+
 const router = express.Router();
 
 router.post("/login", AuthController.authCheck);
@@ -31,5 +34,9 @@ router.post("/save-leave", ApiAuth, LeaveController.create);
 
 router.post("/create-employee", upload.single('profile_img'), EmployeeController.create);
 
+
+router.post("/save-holiday", ApiAuth, HolidayController.create);
+router.get("/holidays", ApiAuth, HolidayController.get);
+router.get("/remove-holidays/:id", ApiAuth, HolidayController.remove);
 
 export default router;
