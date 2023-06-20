@@ -23,26 +23,17 @@ class HolidayController {
             if (!(name && date)) {
                 return res.status(400).send("All input is required");
             }
-
             if (id) {
-
-                const holiday = await Department.findByIdAndUpdate(id, { name: name, date: date });
-                return res.status(200).send("updated");
+                await Holiday.findByIdAndUpdate(id, { name: name, date: date });
+                return res.status(200).send("created");
             } else {
                 // Create user in our database
-                const holiday = await Holiday.create({
-                    name,
-                    date
-                });
+                const holiday = await Holiday.create({ name, date });
                 return res.status(200).send("created");
             }
-            // return new user
-
-
         } catch (err) {
             return res.status(400).json(err);
         }
-        // Our register logic ends here
     }
     static remove = async (req, res) => {
         try {

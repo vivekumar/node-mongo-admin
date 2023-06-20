@@ -3,7 +3,30 @@ import path from "path";
 import bcrypt from "bcryptjs";
 import multer from "multer";
 class EmployeeController {
-
+    static get = async (req, res) => {
+        try {
+            const data = await User.find();
+            if (data.length > 0) {
+                res.status(200).send(data);
+            } else {
+                res.status(404).send("Data not found...!");
+            }
+        } catch (error) {
+            res.status(404).send(error);
+        }
+    };
+    static getById = async (req, res) => {
+        try {
+            const data = await User.findById(req.params.id);            
+            if (data) {
+                return res.status(200).send(data);
+            } else {
+                return res.status(404).send("Data not found...!");
+            }
+        } catch (error) {
+            return res.status(404).send(error);
+        }
+    };
     static create = async (req, res) => {
         let encryptedPassword;
         // Our register logic starts here
@@ -56,10 +79,10 @@ class EmployeeController {
             });
 
             // return new user
-            return res.status(200).json(user);
+            return res.status(200).send(user);
 
         } catch (err) {
-            return res.status(400).json(err);
+            return res.status(400).send(err);
         }
         // Our register logic ends here
     }

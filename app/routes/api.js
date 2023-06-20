@@ -32,6 +32,8 @@ router.get("/designations", ApiAuth, DesignationController.get);
 //router.get("/leave", ApiAuth, LeaveController.get);
 router.post("/save-leave", ApiAuth, LeaveController.create);
 
+router.get("/employees", ApiAuth, EmployeeController.get);
+router.get("/employees/:id", ApiAuth, EmployeeController.getById);
 router.post("/create-employee", upload.single('profile_img'), EmployeeController.create);
 
 
