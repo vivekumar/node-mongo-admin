@@ -17,7 +17,7 @@ class EmployeeController {
     };
     static getById = async (req, res) => {
         try {
-            const data = await User.findById(req.params.id);            
+            const data = await User.findById(req.params.id);
             if (data) {
                 return res.status(200).send(data);
             } else {
@@ -41,11 +41,9 @@ class EmployeeController {
                 description,
             } = req.body;
 
-            const { filename, path } = req.file;
-
+            //const { filename, path } = req.file;
+            const path = req.file.path.split('/').slice(1).join('/');
             // Save the image metadata and additional fields to the database            
-
-
 
             // Validate user input
             if (!(email && password && first_name && last_name)) {
