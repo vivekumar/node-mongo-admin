@@ -18,6 +18,8 @@ const verifyToken = (req, res, next) => {
         decoded.token = token;
         req.session.user = decoded;
 
+
+
     } catch (err) {
         return res.status(401).send("Invalid Token");
     }

@@ -18,6 +18,13 @@ const verifyToken = (req, res, next) => {
         decoded.token = token;
         req.session.user = decoded;
 
+        //send role and permissions
+        //req["user"] = decoded.roles[0]
+        //req["permissions"] = decodeUser.roles[0].permissions
+
+        req.user = decoded.roles[0];
+        //req.permissions = decodeUser.roles[0].permissions;
+        //return res.status(401).send(req["user"]);
     } catch (err) {
         return res.status(401).send("Invalid Token");
         //return res.status(200).json({ "message": "Invalid Token", "status": false });

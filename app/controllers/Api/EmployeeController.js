@@ -1,4 +1,5 @@
 import User from "../../models/User.js";
+import Role from "../../models/Role.js";
 import path from "path";
 import bcrypt from "bcryptjs";
 import multer from "multer";
@@ -29,6 +30,11 @@ class EmployeeController {
     };
     static create = async (req, res) => {
         let encryptedPassword;
+
+        const type = req.body.type || 'Employee';
+        const roleData = await Role.findOne({ name: type })
+        const roles = [roleData._id]
+
         // Our register logic starts here
         try {
             // Get user input
@@ -73,7 +79,8 @@ class EmployeeController {
                 phone,
                 department,
                 designation,
-                description
+                description,
+                roles
             });
 
             // return new user

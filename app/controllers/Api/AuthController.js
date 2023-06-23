@@ -1,4 +1,5 @@
 import User from "../../models/User.js";
+import Role from "../../models/Role.js";
 import path from "path";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -24,7 +25,7 @@ class AuthController {
             if (user && (await bcrypt.compare(password, user.password))) {
                 // Create token
                 const token = jwt.sign(
-                    { user_id: user._id, email, fname: user.first_name, role: 'admin' },
+                    { user_id: user._id, email, fname: user.first_name, roles: user.roles },
                     process.env.TOKEN_KEY,
                     {
                         expiresIn: "6h",
@@ -33,7 +34,7 @@ class AuthController {
                 const authuser = {
                     token: token,
                     user_id: user._id,
-                    email: email, fname: user.first_name, role: 'admin'
+                    email: email, fname: user.first_name, roles: user.roles
                 };
                 // save user token
                 //res.cookie("access_token", token, { httpOnly: true, secure: true, maxAge: 3600000 });
@@ -62,6 +63,11 @@ class AuthController {
 
         let encryptedPassword;
         let err_msg;
+        const type = req.body.type || 'Employee';
+        const roleData = await Role.findOne({ role: type })
+        console.log(roleData, "13")
+        const roles = [roleData._id]
+
         // Our register logic starts here
         try {
             // Get user input
@@ -89,11 +95,12 @@ class AuthController {
                 last_name,
                 email: email.toLowerCase(), // sanitize: convert email to lowercase
                 password: encryptedPassword,
+                roles,
             });
 
             // Create token
             const token = jwt.sign(
-                { user_id: user._id, email, fname: user.first_name, role: 'admin' },
+                { user_id: user._id, email, fname: user.first_name, roles: roles },
                 process.env.TOKEN_KEY,
                 {
                     expiresIn: "6h",
@@ -123,7 +130,14 @@ class AuthController {
         }
         // Our register logic ends here
     }
-
+    static logout = async (req, res) => {
+        try {
+            req.session.user = '';
+            res.status(200).send('success');
+        } catch (err) {
+            res.status(400).send(err);
+        }
+    }
 
 }
 export default AuthController;

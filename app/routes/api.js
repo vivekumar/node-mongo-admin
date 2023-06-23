@@ -15,7 +15,7 @@ const router = express.Router();
 
 router.post("/login", AuthController.authCheck);
 router.post("/register", AuthController.postRegister);
-
+router.post("/logout", AuthController.logout);
 // router.get("/", ApiAuth, coursesController.index);
 // router.post("/course/create", ApiAuth, coursesController.create);
 router.get("/course", ApiAuth, coursesController.get);
