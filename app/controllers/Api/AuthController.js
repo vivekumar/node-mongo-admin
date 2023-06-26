@@ -25,16 +25,20 @@ class AuthController {
             if (user && (await bcrypt.compare(password, user.password))) {
                 // Create token
                 const token = jwt.sign(
-                    { user_id: user._id, email, fname: user.first_name, roles: user.roles },
+                    { user_id: user._id, email, fname: user.first_name, roles: user.roles[0] },
                     process.env.TOKEN_KEY,
                     {
                         expiresIn: "6h",
                     }
                 );
+
+                const id = user.roles[0];
+                const roles = await Role.findOne({ _id: id });
+
                 const authuser = {
                     token: token,
                     user_id: user._id,
-                    email: email, fname: user.first_name, roles: user.roles
+                    email: email, fname: user.first_name, lname: user.last_name, roles: roles
                 };
                 // save user token
                 //res.cookie("access_token", token, { httpOnly: true, secure: true, maxAge: 3600000 });
@@ -48,7 +52,7 @@ class AuthController {
                 user.token = token;
                 //req.session.user = authuser;
                 // user
-                res.status(200).json({ "data": authuser, "status": true });
+                return res.status(200).json({ "data": authuser, "status": true });
             } else {
                 res.status(400).json({ "message": "Invalid Credentials", "status": false });
             }

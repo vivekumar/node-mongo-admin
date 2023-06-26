@@ -7,6 +7,7 @@ const LeaveSchema = new mongoose.Schema(
         from_date: { type: String, required: true },
         to_date: { type: String, required: true },
         reason: { type: String, required: true },
+        user_id: { type: String, required: true, ref: 'users' },
         createdAt: { type: Date, default: Date.now },
     }
 );
