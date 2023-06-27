@@ -32,6 +32,7 @@ router.get("/designations", ApiAuth, DesignationController.get);
 router.post("/save-leave", ApiAuth, LeaveController.create);
 router.get("/leaves", ApiAuth, LeaveController.get);
 router.get("/leave/:id", ApiAuth, LeaveController.getById);
+router.put("/update-leave/:id", ApiAuth, LeaveController.update);
 
 
 router.get("/employees", ApiAuth, EmployeeController.get);

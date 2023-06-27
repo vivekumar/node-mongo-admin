@@ -38,6 +38,19 @@ class LeaveController {
             res.status(404).send(error);
         }
     };
+    static update = async (req, res) => {
+        try {
+            console.log(req.params.id);
+            const data = await Leave.find({ user_id: req.params.id }).populate("user_id");
+            if (data.length > 0) {
+                res.status(200).send(data);
+            } else {
+                res.status(404).send("Data not found...!");
+            }
+        } catch (error) {
+            res.status(404).send(error);
+        }
+    };
     static create = async (req, res) => {
 
         try {
