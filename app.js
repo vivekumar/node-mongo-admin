@@ -68,7 +68,6 @@ app.use("/api", api);
 app.use("/", web);
 
 dotenv.config();
-app.use(cors());
 
 
 

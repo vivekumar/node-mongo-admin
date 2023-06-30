@@ -1,5 +1,6 @@
 import Leave from "../../models/Leave.js";
-
+import sendEmail from "../../config/sendEmail.js"
+//const sendEmail = require('../../config/sendEmail.js');
 class LeaveController {
     static get = async (req, res) => {
         try {
@@ -15,7 +16,6 @@ class LeaveController {
                         leaves: leaves
                     });
                 });*/
-
 
             if (data.length > 0) {
                 res.status(200).send(data);
@@ -40,15 +40,22 @@ class LeaveController {
     };
     static update = async (req, res) => {
         try {
-            console.log(req.params.id);
-            const data = await Leave.find({ user_id: req.params.id }).populate("user_id");
-            if (data.length > 0) {
-                res.status(200).send(data);
+            const post_data = {};
+            if (req.body.role === 'Hr') {
+                post_data.hr_approve = req.body.approve;
+            } else if (req.body.role === 'Tl') {
+                post_data.tl_approve = req.body.approve;
+            } else if (req.body.role === 'Admin') {
+                post_data.admin_approve = req.body.approve;
             } else {
-                res.status(404).send("Data not found...!");
+                post_data = {};
             }
+            sendEmail('vivek.kumar@gmail.com', 'Hello', 'This is the email body.');
+            const data = await Leave.findByIdAndUpdate(req.params.id, post_data);
+            return res.status(200).send(data);
+
         } catch (error) {
-            res.status(404).send(error);
+            return res.status(404).send(error);
         }
     };
     static create = async (req, res) => {
@@ -69,7 +76,7 @@ class LeaveController {
                 user_id,
                 reason
             });
-
+            sendEmail('vivek.kumar@gmail.com', 'Hello', 'This is the email body.');
             // return new user
             return res.status(200).json(leave);
 

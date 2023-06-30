@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Router } from "express";
 import ApiAuth from "../middleware/Auth.js"
 import coursesController from "../controllers/Api/CoursesController.js";
 import AuthController from "../controllers/Api/AuthController.js";
@@ -9,7 +9,7 @@ import multer from "multer";
 import upload from "../middleware/multerMiddleware.js"
 import LeaveController from "../controllers/Api/LeaveController.js";
 import HolidayController from "../controllers/Api/HolidayController.js";
-
+import AttendanceController from "../controllers/Api/AttendanceController.js";
 
 const router = express.Router();
 
@@ -37,11 +37,17 @@ router.put("/update-leave/:id", ApiAuth, LeaveController.update);
 
 router.get("/employees", ApiAuth, EmployeeController.get);
 router.get("/employees/:id", ApiAuth, EmployeeController.getById);
-router.post("/create-employee", upload.single('profile_img'), EmployeeController.create);
+router.post("/create-employee", upload.single('profile_img'), ApiAuth, EmployeeController.create);
 
 
 router.post("/save-holiday", ApiAuth, HolidayController.create);
 router.get("/holidays", ApiAuth, HolidayController.get);
 router.get("/remove-holidays/:id", ApiAuth, HolidayController.remove);
+
+
+router.post("/punch-in-out", ApiAuth, AttendanceController.create);
+router.get("/punch/:id", ApiAuth, AttendanceController.getByUerId);
+
+
 
 export default router;
