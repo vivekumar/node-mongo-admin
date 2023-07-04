@@ -35,8 +35,8 @@ router.get("/leave/:id", ApiAuth, LeaveController.getById);
 router.put("/update-leave/:id", ApiAuth, LeaveController.update);
 
 
-router.get("/employees", ApiAuth, EmployeeController.get);
-router.get("/employees/:id", ApiAuth, EmployeeController.getById);
+router.get("/employees/:month?", ApiAuth, EmployeeController.get);
+router.get("/employee/:id", ApiAuth, EmployeeController.getById);
 router.post("/create-employee", upload.single('profile_img'), ApiAuth, EmployeeController.create);
 
 
@@ -46,8 +46,8 @@ router.get("/remove-holidays/:id", ApiAuth, HolidayController.remove);
 
 
 router.post("/punch-in-out", ApiAuth, AttendanceController.create);
-router.get("/punch/:id", ApiAuth, AttendanceController.getByUerId);
-
+router.get("/punch/:id", ApiAuth, AttendanceController.getOneByUserId);
+router.get("/punch-user/:id", ApiAuth, AttendanceController.getByUserId);
 
 
 export default router;

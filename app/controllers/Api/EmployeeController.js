@@ -1,12 +1,24 @@
 import User from "../../models/User.js";
 import Role from "../../models/Role.js";
+import Attendance from "../../models/Attendance.js";
 import path from "path";
 import bcrypt from "bcryptjs";
 import multer from "multer";
 class EmployeeController {
     static get = async (req, res) => {
         try {
-            const data = await User.find();
+            //return res.status(200).send(req.params.month);
+            //const data = await User.find();
+            const data = await User.aggregate([
+                {
+                    $lookup: {
+                        from: 'attendances',
+                        localField: '_id',
+                        foreignField: 'user_id',
+                        as: 'attendanceInfo',
+                    },
+                },
+            ]);
             if (data.length > 0) {
                 res.status(200).send(data);
             } else {

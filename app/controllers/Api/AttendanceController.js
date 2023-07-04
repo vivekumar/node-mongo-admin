@@ -23,7 +23,7 @@ class AttendanceController {
             console.log("Get All Data - ", error);
         }
     };
-    static getByUerId = async (req, res) => {
+    static getOneByUserId = async (req, res) => {
         try {
             var todayDate = new Date().toISOString().slice(0, 10);
             const data = await Attendance.find({
@@ -33,6 +33,21 @@ class AttendanceController {
             });
             if (data.length == 1) {
                 return res.status(200).send(data[0]);
+            } else {
+                return res.status(404).send("Data not found...!");
+            }
+        } catch (error) {
+            return res.status(404).send(error);
+        }
+    };
+    static getByUserId = async (req, res) => {
+        try {
+            const data = await Attendance.find(
+                { user_id: req.params.id },
+
+            ).sort({ "_id": -1 }).limit(20);
+            if (data.length > 0) {
+                return res.status(200).send(data);
             } else {
                 return res.status(404).send("Data not found...!");
             }
