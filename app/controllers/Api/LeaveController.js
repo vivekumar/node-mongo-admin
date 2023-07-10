@@ -1,6 +1,7 @@
 import Leave from "../../models/Leave.js";
 import sendEmail from "../../config/sendEmail.js"
 //const sendEmail = require('../../config/sendEmail.js');
+import escapeHTML from "escape-html";
 class LeaveController {
     static get = async (req, res) => {
         try {
@@ -39,6 +40,8 @@ class LeaveController {
         }
     };
     static update = async (req, res) => {
+        const uid = escapeHTML(req.params.id);
+
         try {
             const post_data = {};
             if (req.body.role === 'Hr') {
@@ -47,6 +50,8 @@ class LeaveController {
                 post_data.tl_approve = req.body.approve;
             } else if (req.body.role === 'Admin') {
                 post_data.admin_approve = req.body.approve;
+                post_data.tl_approve = req.body.approve;
+                post_data.hr_approve = req.body.approve;
             } else {
                 post_data = {};
             }

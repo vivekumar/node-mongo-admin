@@ -2,13 +2,23 @@ import User from "../../models/User.js";
 import Role from "../../models/Role.js";
 import Attendance from "../../models/Attendance.js";
 import path from "path";
+import escapeHTML from "escape-html";
 import bcrypt from "bcryptjs";
 import multer from "multer";
 class EmployeeController {
     static get = async (req, res) => {
+
         try {
             //return res.status(200).send(req.params.month);
             //const data = await User.find();
+            // _id: 1,
+            // in_time: 1,
+            // out_time: 1,
+            //     ip: 1,
+
+            const currentMonth = Number(req.params.month) + 1;
+            //const currentMonth = new Date().getMonth() + 1;            
+            const currentYear = new Date().getFullYear();
             const data = await User.aggregate([
                 {
                     $lookup: {
@@ -16,6 +26,30 @@ class EmployeeController {
                         localField: '_id',
                         foreignField: 'user_id',
                         as: 'attendanceInfo',
+                    },
+                },
+                {
+                    $project: {
+                        first_name: 1,
+                        last_name: 1,
+                        email: 1,
+                        phone: 1,
+                        emp_id: 1,
+                        designation: 1,
+                        department: 1,
+                        profile_img: 1,
+                        attendanceInfo: {
+                            $filter: {
+                                input: '$attendanceInfo',
+                                as: 'attendance',
+                                cond: {
+                                    $and: [
+                                        { $eq: [{ $year: '$$attendance.in_time' }, currentYear] },
+                                        { $eq: [{ $month: '$$attendance.in_time' }, currentMonth] },
+                                    ],
+                                },
+                            },
+                        },
                     },
                 },
             ]);
@@ -29,8 +63,10 @@ class EmployeeController {
         }
     };
     static getById = async (req, res) => {
+        const uid = escapeHTML(req.params.id);
         try {
-            const data = await User.findById(req.params.id);
+            const data = await User.findById(uid);
+            //const data = await User.find((user) => user.id == uid);
             if (data) {
                 return res.status(200).send(data);
             } else {

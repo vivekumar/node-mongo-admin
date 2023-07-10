@@ -9,6 +9,7 @@ import web from "./app/routes/web.js";
 import api from "./app/routes/api.js";
 import session from "express-session";
 import multer from "multer";
+import rateLimit from "express-rate-limit";
 //import database from "./app/config/database.js"
 var __dirname = path.resolve();
 const app = express();
@@ -23,6 +24,15 @@ app.set("view engine", "ejs");
 app.set("views", __dirname + '/app/views');
 app.use(express.static(__dirname + '/public'));
 
+
+// rate limit 
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: "Too many requests, please try again later",
+});
+app.use(limiter);
+// end rate limit 
 
 //multer file upload code
 //const upload = multer({ dest: 'uploads/' });
