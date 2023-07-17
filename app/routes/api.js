@@ -25,6 +25,8 @@ router.get("/course", ApiAuth, coursesController.get);
 
 
 router.get("/departments", ApiAuth, DepartmentController.get);
+router.post("/department/create", ApiAuth, DepartmentController.create);
+router.delete("/department/remove/:id", ApiAuth, DepartmentController.delete);
 
 router.get("/designations", ApiAuth, DesignationController.get);
 

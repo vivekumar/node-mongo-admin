@@ -27,23 +27,42 @@ class DepartmentController {
     // CREAT
     static create = async (req, res) => {
         try {
-            const data = await Department(req.body);
-            const result = data.save();
 
-            if (req.body) {
-                res.status(201).send({
+            const { name, dept_head } = req.body;
+            const id = req.body.id;
+
+            if (!(name && dept_head)) {
+                //return res.status(400).send("All input is required");
+                return res.status(404).send({
+                    status: "failed",
+                    message: "All input is required",
+                });
+            }
+            if (id) {
+                const result = await Department.findByIdAndUpdate(id, { name, dept_head });
+                return res.status(200).send({
                     status: "success",
                     message: "Create New Data successful!!!",
                     result: result,
                 });
             } else {
-                res.status(404).send({
-                    status: "failed",
-                    message: "Data not Created...!",
+                // Create user in our database
+                const result = await Department.create({ name, dept_head });
+                return res.status(200).send({
+                    status: "success",
+                    message: "Create New Data successful!!!",
+                    result: result,
                 });
             }
+            // const data = await Department(req.body);
+            // const result = data.save();
+
         } catch (error) {
-            console.log("Create Data - ", error);
+            res.status(404).send({
+                status: "failed",
+                message: error,
+            });
+
         }
     };
 

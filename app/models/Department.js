@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 const DepartmentSchema = new mongoose.Schema(
     {
         name: { type: String, required: true },
+        dept_head: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'users' },
         createdAt: { type: Date, default: Date.now },
     }
 );
