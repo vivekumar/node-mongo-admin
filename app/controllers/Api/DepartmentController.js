@@ -5,7 +5,7 @@ class DepartmentController {
     // READ ALL DATA   
     static get = async (req, res) => {
         try {
-            const data = await Department.find();
+            const data = await Department.find().populate("dept_head");
 
             if (data.length > 0) {
                 res.status(200).send({
@@ -28,7 +28,7 @@ class DepartmentController {
     static create = async (req, res) => {
         try {
 
-            const { name, dept_head } = req.body;
+            const { name, dept_head, emp_under } = req.body;
             const id = req.body.id;
 
             if (!(name && dept_head)) {
@@ -39,7 +39,7 @@ class DepartmentController {
                 });
             }
             if (id) {
-                const result = await Department.findByIdAndUpdate(id, { name, dept_head });
+                const result = await Department.findByIdAndUpdate(id, { name, dept_head, emp_under });
                 return res.status(200).send({
                     status: "success",
                     message: "Create New Data successful!!!",
@@ -47,7 +47,7 @@ class DepartmentController {
                 });
             } else {
                 // Create user in our database
-                const result = await Department.create({ name, dept_head });
+                const result = await Department.create({ name, dept_head, emp_under });
                 return res.status(200).send({
                     status: "success",
                     message: "Create New Data successful!!!",

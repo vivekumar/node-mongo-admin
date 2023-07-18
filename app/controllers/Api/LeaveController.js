@@ -1,7 +1,12 @@
 import Leave from "../../models/Leave.js";
 import sendEmail from "../../config/sendEmail.js"
 //const sendEmail = require('../../config/sendEmail.js');
+
+import ejs from "ejs";
+import path from "path";
 import escapeHTML from "escape-html";
+var __dirname = path.resolve();
+
 class LeaveController {
     static get = async (req, res) => {
         try {
@@ -40,23 +45,52 @@ class LeaveController {
         }
     };
     static update = async (req, res) => {
+        try {
+            const templatePath = path.resolve(__dirname, '../../');
+
+            console.log(templatePath);
+            renderedTemplate = await ejs.renderFile(__dirname + "/app/views/emails/HrEmail.ejs", {
+                username: 'John Doe',
+            });
+            console.log(renderedTemplate);
+        } catch (error) {
+            console.error('Error while rendering the template:', error);
+        }
+    }
+    static update2 = async (req, res) => {
         const uid = escapeHTML(req.params.id);
+        let renderedTemplate;
 
         try {
             const post_data = {};
             if (req.body.role === 'Hr') {
                 post_data.hr_approve = req.body.approve;
+                // Render the HTML template with dynamic content
+
+
+
             } else if (req.body.role === 'Tl') {
                 post_data.tl_approve = req.body.approve;
             } else if (req.body.role === 'Admin') {
                 post_data.admin_approve = req.body.approve;
                 post_data.tl_approve = req.body.approve;
                 post_data.hr_approve = req.body.approve;
+                //const templateContent = await fs.readFile('../../views/emails/HrEmail.js', 'utf-8');
+                console.log(ejs);
+                renderedTemplate = await ejs.renderFile("../../views/emails/HrEmail.js", {
+                    username: 'John Doe',
+                });
+
+                console.log(renderedTemplate);
+                return res.status(200).send(req.body);
+
             } else {
                 post_data = {};
             }
-            sendEmail('vivek.kumar@gmail.com', 'Hello', 'This is the email body.');
-            const data = await Leave.findByIdAndUpdate(req.params.id, post_data);
+            console.log(post_data);
+            const data = '';
+            sendEmail('vivek.kumar@gmail.com', 'Hello', renderedTemplate);
+            //const data = await Leave.findByIdAndUpdate(req.params.id, post_data);
             return res.status(200).send(data);
 
         } catch (error) {
