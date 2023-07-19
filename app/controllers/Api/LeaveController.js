@@ -44,12 +44,12 @@ class LeaveController {
             res.status(404).send(error);
         }
     };
-    static update = async (req, res) => {
+    static update2 = async (req, res) => {
         try {
             const templatePath = path.resolve(__dirname, '../../');
 
             console.log(templatePath);
-            renderedTemplate = await ejs.renderFile(__dirname + "/app/views/emails/HrEmail.ejs", {
+            const renderedTemplate = await ejs.renderFile(__dirname + "/app/views/emails/HrEmail.ejs", {
                 username: 'John Doe',
             });
             console.log(renderedTemplate);
@@ -57,40 +57,42 @@ class LeaveController {
             console.error('Error while rendering the template:', error);
         }
     }
-    static update2 = async (req, res) => {
+    static update = async (req, res) => {
         const uid = escapeHTML(req.params.id);
         let renderedTemplate;
+        const leave_data = await Leave.findById(uid).populate("user_id");
 
         try {
             const post_data = {};
             if (req.body.role === 'Hr') {
-                post_data.hr_approve = req.body.approve;
-                // Render the HTML template with dynamic content
-
-
-
+                post_data.hr_approve = req.body.approve;                
             } else if (req.body.role === 'Tl') {
                 post_data.tl_approve = req.body.approve;
             } else if (req.body.role === 'Admin') {
                 post_data.admin_approve = req.body.approve;
                 post_data.tl_approve = req.body.approve;
                 post_data.hr_approve = req.body.approve;
-                //const templateContent = await fs.readFile('../../views/emails/HrEmail.js', 'utf-8');
-                console.log(ejs);
-                renderedTemplate = await ejs.renderFile("../../views/emails/HrEmail.js", {
-                    username: 'John Doe',
-                });
-
-                console.log(renderedTemplate);
-                return res.status(200).send(req.body);
 
             } else {
                 post_data = {};
             }
-            console.log(post_data);
-            const data = '';
-            sendEmail('vivek.kumar@gmail.com', 'Hello', renderedTemplate);
-            //const data = await Leave.findByIdAndUpdate(req.params.id, post_data);
+
+            if (req.body.approve === "Approve") {
+                renderedTemplate = await ejs.renderFile(__dirname + "/app/views/emails/LeaveApproveEmail.ejs", {
+                    to_date: new Date(leave_data.to_date).toISOString().substring(0, 10),
+                    from_date: new Date(leave_data.from_date).toISOString().substring(0, 10),
+                    first_name: leave_data.user_id.first_name
+                });
+                sendEmail('vivek.kumar@gmail.com', 'Leave Approval - ' + req.body.role, renderedTemplate);
+            } else {
+                renderedTemplate = await ejs.renderFile(__dirname + "/app/views/emails/LeaveRejectEmail.ejs", {
+                    to_date: new Date(leave_data.to_date).toISOString().substring(0, 10),
+                    from_date: new Date(leave_data.from_date).toISOString().substring(0, 10),
+                    first_name: leave_data.user_id.first_name
+                });
+                sendEmail('vivek.kumar@gmail.com', 'Leave Reject - ' + req.body.role, renderedTemplate);
+            }
+            const data = await Leave.findByIdAndUpdate(req.params.id, post_data);
             return res.status(200).send(data);
 
         } catch (error) {
