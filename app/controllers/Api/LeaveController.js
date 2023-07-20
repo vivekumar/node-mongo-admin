@@ -1,10 +1,15 @@
 import Leave from "../../models/Leave.js";
 import sendEmail from "../../config/sendEmail.js"
+import Department from "../../models/Department.js";
 //const sendEmail = require('../../config/sendEmail.js');
 
 import ejs from "ejs";
 import path from "path";
 import escapeHTML from "escape-html";
+
+
+
+
 var __dirname = path.resolve();
 
 class LeaveController {
@@ -61,18 +66,25 @@ class LeaveController {
         const uid = escapeHTML(req.params.id);
         let renderedTemplate;
         const leave_data = await Leave.findById(uid).populate("user_id");
+        //retrive data form sending mail
+        const department = await Department.findById(leave_data.user_id.department).populate("dept_head");
+        const department_hr = await Department.find({ name: 'Hr' }).populate("dept_head");
+
+        let mailList = [leave_data.user_id.email, department.dept_head.email, department_hr[0].dept_head.email];
+        mailList.toString();
+        //retrive data form sending mail
+        //return res.status(200).send(mailList);
 
         try {
             const post_data = {};
             if (req.body.role === 'Hr') {
-                post_data.hr_approve = req.body.approve;                
+                post_data.hr_approve = req.body.approve;
             } else if (req.body.role === 'Tl') {
                 post_data.tl_approve = req.body.approve;
             } else if (req.body.role === 'Admin') {
                 post_data.admin_approve = req.body.approve;
                 post_data.tl_approve = req.body.approve;
                 post_data.hr_approve = req.body.approve;
-
             } else {
                 post_data = {};
             }
@@ -83,14 +95,15 @@ class LeaveController {
                     from_date: new Date(leave_data.from_date).toISOString().substring(0, 10),
                     first_name: leave_data.user_id.first_name
                 });
-                sendEmail('vivek.kumar@gmail.com', 'Leave Approval - ' + req.body.role, renderedTemplate);
+
+                sendEmail(mailList, 'Leave Approval - ' + req.body.role, renderedTemplate);
             } else {
                 renderedTemplate = await ejs.renderFile(__dirname + "/app/views/emails/LeaveRejectEmail.ejs", {
                     to_date: new Date(leave_data.to_date).toISOString().substring(0, 10),
                     from_date: new Date(leave_data.from_date).toISOString().substring(0, 10),
                     first_name: leave_data.user_id.first_name
                 });
-                sendEmail('vivek.kumar@gmail.com', 'Leave Reject - ' + req.body.role, renderedTemplate);
+                sendEmail(mailList, 'Leave Reject - ' + req.body.role, renderedTemplate);
             }
             const data = await Leave.findByIdAndUpdate(req.params.id, post_data);
             return res.status(200).send(data);
@@ -126,6 +139,7 @@ class LeaveController {
         }
         // Our register logic ends here
     }
+
 
 
 }

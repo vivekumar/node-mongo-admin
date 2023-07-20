@@ -10,6 +10,10 @@ import api from "./app/routes/api.js";
 import session from "express-session";
 import multer from "multer";
 import rateLimit from "express-rate-limit";
+
+import cron from "node-cron";
+import moment from "moment-timezone"
+
 //import database from "./app/config/database.js"
 var __dirname = path.resolve();
 const app = express();
@@ -78,6 +82,26 @@ app.use("/api", api);
 app.use("/", web);
 
 dotenv.config();
+
+
+
+
+//cron setup for update leave every month
+const timezone = 'Asia/Kolkata';
+cron.schedule('30 10 * * *', () => {
+    const now = moment().tz(timezone);
+    if (now.hour() === 10 && now.minute() === 30) {
+
+        // Execute your API here
+        fetch('http://localhost:3034/my-api-route')
+            .then(res => res.json())
+            .then(data => console.log(data))
+            .catch(err => console.error(err));
+
+    }
+}, {
+    timezone // Set the timezone for the cron job
+});
 
 
 

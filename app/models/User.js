@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
     emp_id: { type: String, unique: true },
     join_data: { type: String, default: null },
     phone: { type: String },
-    department: { type: String, default: null },
+    department: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'departments' },
     designation: { type: String, default: null },
     description: { type: String, default: null },
     profile_img: { type: String, default: null },
