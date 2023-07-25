@@ -116,7 +116,7 @@ mongoose
         });
     })
     .catch((err) => {
-        console.log("Error Occurred");
+        console.log(err);
     });
 
 /*
