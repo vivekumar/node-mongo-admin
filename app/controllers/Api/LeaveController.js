@@ -2,7 +2,7 @@ import Leave from "../../models/Leave.js";
 import sendEmail from "../../config/sendEmail.js"
 import Department from "../../models/Department.js";
 //const sendEmail = require('../../config/sendEmail.js');
-
+import User from "../../models/User.js";
 import ejs from "ejs";
 import path from "path";
 import escapeHTML from "escape-html";
@@ -17,7 +17,7 @@ class LeaveController {
         try {
             //const data = await Leave.find();
 
-            const data = await Leave.find().populate("user_id");
+            const data = await Leave.find().sort({ _id: -1 }).populate("user_id");
 
             /*const data = Leave.find({})
                 .populate('user_id')
@@ -39,7 +39,7 @@ class LeaveController {
     };
     static getById = async (req, res) => {
         try {
-            const data = await Leave.find({ user_id: req.params.id }).populate("user_id");
+            const data = await Leave.find({ user_id: req.params.id }).sort({ _id: -1 }).populate("user_id");
             if (data.length > 0) {
                 res.status(200).send(data);
             } else {
@@ -117,6 +117,13 @@ class LeaveController {
         try {
             // Get user input
             const { leave_type, from_date, to_date, reason, user_id } = req.body;
+            let renderedTemplate;
+            const user = await User.findById(user_id);
+            const department = await Department.findById(user.department).populate("dept_head");
+            const department_hr = await Department.find({ name: 'Hr' }).populate("dept_head");
+
+            let mailList = [user.email, department.dept_head.email, department_hr[0].dept_head.email];
+            mailList.toString();
 
             // Validate user input
             if (!(leave_type && from_date && to_date && reason && user_id)) {
@@ -130,9 +137,19 @@ class LeaveController {
                 user_id,
                 reason
             });
-            sendEmail('vivek.kumar@gmail.com', 'Hello', 'This is the email body.');
+            renderedTemplate = await ejs.renderFile(__dirname + "/app/views/emails/LeaveApplyEmail.ejs", {
+                to_date: new Date(to_date).toISOString().substring(0, 10),
+                from_date: new Date(from_date).toISOString().substring(0, 10),
+                first_name: user.first_name,
+                reason: reason,
+                leave_type: leave_type
+            });
+
+            sendEmail(mailList, 'Leave Request - ', renderedTemplate);
+
+            //sendEmail('vivek.kumar@gmail.com', 'Hello', 'This is the email body.');
             // return new user
-            return res.status(200).json(leave);
+            return res.status(200).json(user);
 
         } catch (err) {
             return res.status(400).json(err);
