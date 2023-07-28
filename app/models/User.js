@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     designation: { type: String, default: null },
     description: { type: String, default: null },
     profile_img: { type: String, default: null },
+    leaves: { type: Number, double: true, default: null },
     roles: [{ type: String, ref: 'roles' }],
     createdAt: { type: Date, default: Date.now },
 });

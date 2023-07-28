@@ -89,13 +89,25 @@ class LeaveController {
                 post_data = {};
             }
 
+            // To calculate the no. of days between two dates
+            //let toDate = new Date(leave_data.to_date).toISOString().substring(0, 10);
+            //let fromDate1 = new Date(leave_data.from_date).toISOString().substring(0, 10);
+            let toDate = new Date(leave_data.to_date);
+            let fromDate = new Date(leave_data.from_date);
+
+            let diff = Math.abs(fromDate - toDate)
+            const daysDiff = diff / (1000 * 60 * 60 * 24);
+
+
             if (req.body.approve === "Approve") {
+
                 renderedTemplate = await ejs.renderFile(__dirname + "/app/views/emails/LeaveApproveEmail.ejs", {
                     to_date: new Date(leave_data.to_date).toISOString().substring(0, 10),
                     from_date: new Date(leave_data.from_date).toISOString().substring(0, 10),
                     first_name: leave_data.user_id.first_name
                 });
 
+                const data = await User.updateOne({ _id: leave_data.user_id._id }, { $inc: { leaves: -daysDiff } });
                 sendEmail(mailList, 'Leave Approval - ' + req.body.role, renderedTemplate);
             } else {
                 renderedTemplate = await ejs.renderFile(__dirname + "/app/views/emails/LeaveRejectEmail.ejs", {

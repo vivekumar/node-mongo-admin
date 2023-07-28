@@ -10,10 +10,10 @@ import api from "./app/routes/api.js";
 import session from "express-session";
 import multer from "multer";
 import rateLimit from "express-rate-limit";
-
+import User from "./app/models/User.js";
 import cron from "node-cron";
-import moment from "moment-timezone"
-
+//import moment from "moment-timezone"
+//import sendEmail from "./app/config/sendEmail.js"
 //import database from "./app/config/database.js"
 var __dirname = path.resolve();
 const app = express();
@@ -39,7 +39,7 @@ app.use(limiter);
 // end rate limit 
 
 //multer file upload code
-//const upload = multer({ dest: 'uploads/' });
+// const upload = multer({ dest: 'uploads/' });
 // const DIR = './public/';
 // const storage = multer.diskStorage({
 //     destination: (req, file, cb) => {
@@ -50,7 +50,7 @@ app.use(limiter);
 //         cb(null, uuidv4() + '-' + fileName)
 //     }
 // });
-// var upload = multer({
+// var upload1 = multer({
 //     storage: storage,
 //     fileFilter: (req, file, cb) => {
 //         if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
@@ -87,7 +87,7 @@ dotenv.config();
 
 
 //cron setup for update leave every month
-const timezone = 'Asia/Kolkata';
+/*const timezone = 'Asia/Kolkata';
 cron.schedule('30 10 * * *', () => {
     const now = moment().tz(timezone);
     if (now.hour() === 10 && now.minute() === 30) {
@@ -101,7 +101,34 @@ cron.schedule('30 10 * * *', () => {
     }
 }, {
     timezone // Set the timezone for the cron job
+});*/
+
+cron.schedule("0 0 * * * *", function () {
+    mailService();
 });
+
+async function mailService() {
+    let month_leaves;
+    const monthArr = [1, 3, 5, 7, 9, 11]
+    const currentMonth = new Date().getMonth();
+    const match1 = monthArr.includes(currentMonth);
+    if (match1) {
+        month_leaves = 1.5;
+    } else {
+        month_leaves = 1;
+    }
+    try {
+        const data = await User.updateMany({}, { $inc: { leaves: month_leaves } });
+        console.log(data);
+    } catch (e) {
+        console.log(e);
+    }
+    //sendEmail('dev12@infoiconsoftware.com', 'Hello', 'This is the email body form cron mail.');
+    console.log("update successfully!");
+}
+
+//cron setup end this line
+
 
 
 
