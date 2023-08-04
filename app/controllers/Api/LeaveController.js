@@ -49,17 +49,13 @@ class LeaveController {
             res.status(404).send(error);
         }
     };
-    static update2 = async (req, res) => {
+    static leaveUpdate = async (req, res) => {
         try {
-            const templatePath = path.resolve(__dirname, '../../');
-
-            console.log(templatePath);
-            const renderedTemplate = await ejs.renderFile(__dirname + "/app/views/emails/HrEmail.ejs", {
-                username: 'John Doe',
-            });
-            console.log(renderedTemplate);
+            const leaves = req.body.leaves;
+            const data = await User.updateOne({ _id: req.params.id }, { $set: { leaves: req.body.leaves } });
+            return res.status(200).send(data);
         } catch (error) {
-            console.error('Error while rendering the template:', error);
+            return res.status(400).json(error);
         }
     }
     static update = async (req, res) => {

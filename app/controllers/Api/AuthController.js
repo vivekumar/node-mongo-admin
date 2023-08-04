@@ -38,7 +38,11 @@ class AuthController {
                 const authuser = {
                     token: token,
                     user_id: user._id,
-                    email: email, fname: user.first_name, lname: user.last_name, roles: roles
+                    email: email,
+                    fname: user.first_name,
+                    lname: user.last_name,
+                    profile_img: user.profile_img,
+                    roles: roles
                 };
                 // save user token
                 //res.cookie("access_token", token, { httpOnly: true, secure: true, maxAge: 3600000 });

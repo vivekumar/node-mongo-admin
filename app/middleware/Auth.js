@@ -22,7 +22,7 @@ const verifyToken = (req, res, next) => {
         //req["user"] = decoded.roles[0]
         //req["permissions"] = decodeUser.roles[0].permissions
 
-        req.user = decoded.roles[0];
+        req.user = decoded;
         //req.permissions = decodeUser.roles[0].permissions;
         //return res.status(401).send(req["user"]);
     } catch (err) {

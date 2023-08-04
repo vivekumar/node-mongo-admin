@@ -11,6 +11,7 @@ import LeaveController from "../controllers/Api/LeaveController.js";
 import HolidayController from "../controllers/Api/HolidayController.js";
 import AttendanceController from "../controllers/Api/AttendanceController.js";
 import DashboardController from "../controllers/Api/DashboardController.js"
+import RoleController from "../controllers/Api/RoleController.js";
 
 const router = express.Router();
 
@@ -32,10 +33,12 @@ router.delete("/department/remove/:id", ApiAuth, DepartmentController.delete);
 
 router.get("/designations", ApiAuth, DesignationController.get);
 
+router.get("/roles", ApiAuth, RoleController.get);
 
 router.post("/save-leave", ApiAuth, LeaveController.create);
 router.get("/leaves", ApiAuth, LeaveController.get);
 router.get("/leave/:id", ApiAuth, LeaveController.getById);
+router.patch("/emp-leave/:id", ApiAuth, LeaveController.leaveUpdate);
 router.put("/update-leave/:id", ApiAuth, LeaveController.update);
 
 

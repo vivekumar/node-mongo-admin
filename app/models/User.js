@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     join_data: { type: String, default: null },
     phone: { type: String },
     department: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'departments' },
-    designation: { type: String, default: null },
+    designation: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'designations' },
     description: { type: String, default: null },
     profile_img: { type: String, default: null },
     leaves: { type: Number, double: true, default: null },

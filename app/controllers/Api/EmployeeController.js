@@ -65,7 +65,7 @@ class EmployeeController {
     static getById = async (req, res) => {
         const uid = escapeHTML(req.params.id);
         try {
-            const data = await User.findById(uid);
+            const data = await User.findById(uid).populate("designation").populate("department");
             //const data = await User.find((user) => user.id == uid);
             if (data) {
                 return res.status(200).send(data);
@@ -77,11 +77,16 @@ class EmployeeController {
         }
     };
     static create = async (req, res) => {
-        let encryptedPassword;
+        let encryptedPassword; let roles;
+        let login_user_role = await Role.findById(req.user.roles)
+        if (login_user_role === 'Admin') {
+            roles = [req.body.role]
+        } else {
+            const type = 'Employee';
+            const roleData = await Role.findOne({ name: type })
+            roles = [roleData._id]
+        }
 
-        const type = req.body.type || 'Employee';
-        const roleData = await Role.findOne({ name: type })
-        const roles = [roleData._id]
 
         // Our register logic starts here
         try {
