@@ -145,6 +145,19 @@ class EmployeeController {
         // Our register logic ends here
     }
 
+    static remove = async (req, res) => {
+        try {
 
+            const data = await User.deleteOne({ _id: req.params.id });
+
+            if (data) {
+                return res.status(200).send('success');
+            } else {
+                return res.status(404).send('failed');
+            }
+        } catch (error) {
+            return res.status(404).send(error);
+        }
+    }
 }
 export default EmployeeController;

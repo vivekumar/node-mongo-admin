@@ -21,6 +21,7 @@ class DepartmentController {
             }
         } catch (error) {
             console.log("Get All Data - ", error);
+            res.status(404).send(error);
         }
     };
 
@@ -84,6 +85,7 @@ class DepartmentController {
             }
         } catch (error) {
             console.log("Single Data - ", error);
+            res.status(404).send(error);
         }
     };
 
@@ -104,7 +106,7 @@ class DepartmentController {
                 });
             }
         } catch (error) {
-            console.log("Update Data - ", error);
+            res.status(404).send(error);
         }
     };
 
@@ -125,7 +127,7 @@ class DepartmentController {
                 });
             }
         } catch (error) {
-            console.log("Delete Data - ", error);
+            res.status(404).send(error);
         }
     };
 }

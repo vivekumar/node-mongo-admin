@@ -32,6 +32,8 @@ router.post("/department/create", ApiAuth, DepartmentController.create);
 router.delete("/department/remove/:id", ApiAuth, DepartmentController.delete);
 
 router.get("/designations", ApiAuth, DesignationController.get);
+router.post("/save-designation", ApiAuth, DesignationController.create);
+router.get("/remove-designation/:id", ApiAuth, DesignationController.delete);
 
 router.get("/roles", ApiAuth, RoleController.get);
 
@@ -45,7 +47,7 @@ router.put("/update-leave/:id", ApiAuth, LeaveController.update);
 router.get("/employees/:month?", EmployeeController.get);
 router.get("/employee/:id", ApiAuth, EmployeeController.getById);
 router.post("/create-employee", upload.single('profile_img'), ApiAuth, EmployeeController.create);
-
+router.get("/remove-employee/:id", ApiAuth, EmployeeController.remove);
 
 router.post("/save-holiday", ApiAuth, HolidayController.create);
 router.get("/holidays", ApiAuth, HolidayController.get);
