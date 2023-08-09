@@ -12,7 +12,7 @@ import HolidayController from "../controllers/Api/HolidayController.js";
 import AttendanceController from "../controllers/Api/AttendanceController.js";
 import DashboardController from "../controllers/Api/DashboardController.js"
 import RoleController from "../controllers/Api/RoleController.js";
-
+import LeaveTypeController from "../controllers/Api/LeaveTypeController.js";
 const router = express.Router();
 
 router.post("/login", AuthController.authCheck);
@@ -35,6 +35,10 @@ router.get("/designations", ApiAuth, DesignationController.get);
 router.post("/save-designation", ApiAuth, DesignationController.create);
 router.get("/remove-designation/:id", ApiAuth, DesignationController.delete);
 
+router.get("/leave-type", ApiAuth, LeaveTypeController.get);
+router.post("/save-leave-type", ApiAuth, LeaveTypeController.create);
+router.get("/remove-leave-type/:id", ApiAuth, LeaveTypeController.delete);
+
 router.get("/roles", ApiAuth, RoleController.get);
 
 router.post("/save-leave", ApiAuth, LeaveController.create);
@@ -46,6 +50,7 @@ router.put("/update-leave/:id", ApiAuth, LeaveController.update);
 
 router.get("/employees/:month?", EmployeeController.get);
 router.get("/employee/:id", ApiAuth, EmployeeController.getById);
+router.get("/employee-view/:id", ApiAuth, EmployeeController.view);
 router.post("/create-employee", upload.single('profile_img'), ApiAuth, EmployeeController.create);
 router.get("/remove-employee/:id", ApiAuth, EmployeeController.remove);
 
