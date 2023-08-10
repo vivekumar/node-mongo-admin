@@ -104,7 +104,8 @@ class LeaveController {
                 });
 
                 const data = await User.updateOne({ _id: leave_data.user_id._id }, { $inc: { leaves: -daysDiff } });
-                sendEmail(mailList, 'Leave Approval - ' + req.body.role, renderedTemplate);
+                //sendEmail(mailList, 'Leave Approval - ' + req.body.role, renderedTemplate);
+                return res.status(200).send({ dd: leave_data.user_id._id });
             } else {
                 renderedTemplate = await ejs.renderFile(__dirname + "/app/views/emails/LeaveRejectEmail.ejs", {
                     to_date: new Date(leave_data.to_date).toISOString().substring(0, 10),
