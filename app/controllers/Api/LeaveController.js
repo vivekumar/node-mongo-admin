@@ -92,8 +92,8 @@ class LeaveController {
             let fromDate = new Date(leave_data.from_date);
 
             let diff = Math.abs(fromDate - toDate)
-            const daysDiff = diff / (1000 * 60 * 60 * 24);
-
+            let daysDiff = diff / (1000 * 60 * 60 * 24);
+            daysDiff = daysDiff + 1;
 
             if (req.body.approve === "Approve") {
 

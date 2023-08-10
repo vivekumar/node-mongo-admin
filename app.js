@@ -103,7 +103,7 @@ cron.schedule('30 10 * * *', () => {
     timezone // Set the timezone for the cron job
 });*/
 
-cron.schedule("0 0 * * * *", function () {
+cron.schedule("0 0 1 * *", function () {
     mailService();
 });
 
@@ -129,7 +129,10 @@ async function mailService() {
 
 //cron setup end this line
 
-
+app.get('/api/server-time', (req, res) => {
+    const currentTime = new Date();
+    res.json({ serverTime: currentTime });
+});
 
 
 

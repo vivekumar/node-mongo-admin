@@ -59,16 +59,29 @@ class AttendanceController {
     static create = async (req, res) => {
         let data = {};
         try {
+
+
             if (req.body.status === "InTime") {
-                data.user_id = req.body.userId;
-                data.out_time = '';
-                data.ip = req.connection.remoteAddress;
-                const result = await Attendance.create(data);
-                res.status(200).send({
-                    status: "success",
-                    message: "Attendance insert successful!!!",
-                    result: result,
-                });
+                let user_id = req.body.userId;
+                var todayDate = new Date().toISOString().slice(0, 10);
+                const oldAtt = await Attendance.findOne({ user_id, in_time: { $gte: todayDate } });
+
+                if (oldAtt !== null) {
+                    res.status(201).send({
+                        status: "success",
+                        message: "Attendance Allready punch"
+                    });
+                } else {
+                    data.user_id = req.body.userId;
+                    data.out_time = '';
+                    data.ip = req.connection.remoteAddress;
+                    const result = await Attendance.create(data);
+                    res.status(200).send({
+                        status: "success",
+                        message: "Attendance insert successful!!!",
+                        result: result,
+                    });
+                }
             } else {
 
                 data.out_time = new Date();
@@ -83,6 +96,7 @@ class AttendanceController {
 
         } catch (error) {
             console.log("Create Data - ", error);
+            res.status(404).send({ error });
         }
     };
 
