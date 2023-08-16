@@ -59,8 +59,6 @@ class AttendanceController {
     static create = async (req, res) => {
         let data = {};
         try {
-
-
             if (req.body.status === "InTime") {
                 let user_id = req.body.userId;
                 var todayDate = new Date().toISOString().slice(0, 10);

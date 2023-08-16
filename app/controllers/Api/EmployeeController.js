@@ -253,7 +253,8 @@ class EmployeeController {
 
     static remove = async (req, res) => {
         try {
-
+            await Leave.deleteMany({ user_id: req.params.id });
+            await Attendance.deleteMany({ user_id: req.params.id });
             const data = await User.deleteOne({ _id: req.params.id });
 
             if (data) {
