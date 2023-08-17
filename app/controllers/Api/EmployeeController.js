@@ -10,14 +10,10 @@ class EmployeeController {
     static get = async (req, res) => {
 
         try {
-            //return res.status(200).send(req.params.month);
-            //const data = await User.find();
-            // _id: 1,
-            // in_time: 1,
-            // out_time: 1,
-            //     ip: 1,
+            //return res.status(200).send(req.query.month);
 
-            const currentMonth = Number(req.params.month) + 1;
+            const currentMonth = Number(req.query.month) + 1;
+            //const currentMonth = Number(req.params.month) + 1;
             //const currentMonth = new Date().getMonth() + 1;            
             const currentYear = new Date().getFullYear();
             /*const data = await User.aggregate([
@@ -54,6 +50,10 @@ class EmployeeController {
                     },
                 },
             ]);*/
+            const itemsPerPage = 5;
+            const page = parseInt(req.query.page) || 1;
+            const totalCount = await User.countDocuments();
+            const totalPages = Math.ceil(totalCount / itemsPerPage);
 
             const data = await User.aggregate([
                 {
@@ -104,9 +104,13 @@ class EmployeeController {
                         },
                     },
                 },
+                { $skip: (page - 1) * itemsPerPage },
+                { $limit: itemsPerPage },
+
             ]);
+            return res.status(200).send({ data, currentPage: page, totalPages });
             if (data.length > 0) {
-                res.status(200).send(data);
+                res.status(200).send({ data, totalPages, currentPage: page });
             } else {
                 res.status(404).send("Data not found...!");
             }

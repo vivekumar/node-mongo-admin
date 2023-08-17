@@ -14,22 +14,21 @@ var __dirname = path.resolve();
 
 class LeaveController {
     static get = async (req, res) => {
+        const itemsPerPage = 5;
         try {
-            //const data = await Leave.find();
+            const page = parseInt(req.query.page) || 1;
+            const totalCount = await Leave.countDocuments();
+            const totalPages = Math.ceil(totalCount / itemsPerPage);
+            const data = await Leave.find()
+                .skip((page - 1) * itemsPerPage)
+                .limit(itemsPerPage)
+                .sort({ _id: -1 }).populate("user_id");
 
-            const data = await Leave.find().sort({ _id: -1 }).populate("user_id");
+            //const items = await Leave.find().skip((page - 1) * itemsPerPage).limit(itemsPerPage);
 
-            /*const data = Leave.find({})
-                .populate('user_id')
-                .exec(function (err, leaves, count) {
-                    res.render('index', {
-                        user: req.user,
-                        leaves: leaves
-                    });
-                });*/
 
             if (data.length > 0) {
-                res.status(200).send(data);
+                res.status(200).send({ data, totalPages, currentPage: page });
             } else {
                 res.status(404).send("Data not found...!");
             }
