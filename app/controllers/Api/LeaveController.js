@@ -6,7 +6,7 @@ import User from "../../models/User.js";
 import ejs from "ejs";
 import path from "path";
 import escapeHTML from "escape-html";
-
+import Moment from "moment";
 
 
 
@@ -59,7 +59,7 @@ class LeaveController {
     }
     static update = async (req, res) => {
         const uid = escapeHTML(req.params.id);
-        let renderedTemplate; let daysDiff;
+        let renderedTemplate; let daysDiff; let toDate; let fromDate;
         const leave_data = await Leave.findById(uid).populate("user_id");
         //retrive data form sending mail
         const department = await Department.findById(leave_data.user_id.department).populate("dept_head");
@@ -89,30 +89,37 @@ class LeaveController {
             //let fromDate1 = new Date(leave_data.from_date).toISOString().substring(0, 10);
             if (leave_data.leave_type === 'Sort Leave') {
                 daysDiff = 0.5;
+                toDate = Moment(leave_data.to_date).format('LLL');
+                fromDate = Moment(leave_data.from_date).format('LLL');
             } else if (leave_data.leave_type === 'Half Day Leave') {
                 daysDiff = 0.25;
-
+                toDate = Moment(leave_data.to_date).format('LLL');
+                fromDate = Moment(leave_data.from_date).format('LLL');
             } else {
-                let toDate = new Date(leave_data.to_date);
-                let fromDate = new Date(leave_data.from_date);
+                toDate = new Date(leave_data.to_date);
+                fromDate = new Date(leave_data.from_date);
 
                 let diff = Math.abs(fromDate - toDate)
                 let daysDiff1 = diff / (1000 * 60 * 60 * 24);
                 daysDiff = daysDiff1 + 1;
+
+                toDate = Moment(leave_data.to_date).format('LL');
+                fromDate = Moment(leave_data.from_date).format('LL');
             }
+
 
             if (req.body.approve === "Approve") {
                 renderedTemplate = await ejs.renderFile(__dirname + "/app/views/emails/LeaveApproveEmail.ejs", {
-                    to_date: new Date(leave_data.to_date).toISOString().substring(0, 10),
-                    from_date: new Date(leave_data.from_date).toISOString().substring(0, 10),
+                    to_date: toDate,
+                    from_date: fromDate,
                     first_name: leave_data.user_id.first_name
                 });
                 sendEmail(mailList, 'Leave Approval - ' + req.body.role, renderedTemplate);
                 //return res.status(200).send({ dd: leave_data.user_id._id });
             } else {
                 renderedTemplate = await ejs.renderFile(__dirname + "/app/views/emails/LeaveRejectEmail.ejs", {
-                    to_date: new Date(leave_data.to_date).toISOString().substring(0, 10),
-                    from_date: new Date(leave_data.from_date).toISOString().substring(0, 10),
+                    to_date: toDate,
+                    from_date: fromDate,
                     first_name: leave_data.user_id.first_name
                 });
                 sendEmail(mailList, 'Leave Reject - ' + req.body.role, renderedTemplate);
@@ -135,6 +142,7 @@ class LeaveController {
     };
     static create = async (req, res) => {
         let data = {};
+        let toDate; let fromDate;
         try {
             // Get user input
             //const { leave_type, from_date, to_date, reason, user_id } = req.body;
@@ -173,10 +181,17 @@ class LeaveController {
                 data.to_date = req.body.to_date;
             }
 
+            if (leave_data.leave_type === 'Sort Leave' || leave_data.leave_type === 'Half Day Leave') {
+                toDate = Moment(leave_data.to_date).format('LLL');
+                fromDate = Moment(leave_data.from_date).format('LLL');
+            } else {
+                toDate = Moment(leave_data.to_date).format('LL');
+                fromDate = Moment(leave_data.from_date).format('LL');
+            }
             const leave = await Leave.create(data);
             renderedTemplate = await ejs.renderFile(__dirname + "/app/views/emails/LeaveApplyEmail.ejs", {
-                to_date: new Date(data.to_date).toISOString().substring(0, 10),
-                from_date: new Date(data.from_date).toISOString().substring(0, 10),
+                to_date: toDate,
+                from_date: fromDate,
                 first_name: user.first_name,
                 reason: reason,
                 leave_type: leave_type
