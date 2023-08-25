@@ -143,6 +143,7 @@ class LeaveController {
     static create = async (req, res) => {
         let data = {};
         let toDate; let fromDate;
+
         try {
             // Get user input
             //const { leave_type, from_date, to_date, reason, user_id } = req.body;
@@ -181,13 +182,15 @@ class LeaveController {
                 data.to_date = req.body.to_date;
             }
 
-            if (leave_data.leave_type === 'Sort Leave' || leave_data.leave_type === 'Half Day Leave') {
-                toDate = Moment(leave_data.to_date).format('LLL');
-                fromDate = Moment(leave_data.from_date).format('LLL');
+            if (leave_type === 'Sort Leave' || leave_type === 'Half Day Leave') {
+                toDate = Moment(req.body.to_date).format('LLL');
+                fromDate = Moment(req.body.from_date).format('LLL');
             } else {
-                toDate = Moment(leave_data.to_date).format('LL');
-                fromDate = Moment(leave_data.from_date).format('LL');
+                toDate = Moment(req.body.to_date).format('LL');
+                fromDate = Moment(req.body.from_date).format('LL');
             }
+
+
             const leave = await Leave.create(data);
             renderedTemplate = await ejs.renderFile(__dirname + "/app/views/emails/LeaveApplyEmail.ejs", {
                 to_date: toDate,
