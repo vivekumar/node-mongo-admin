@@ -53,6 +53,7 @@ router.get("/employee/:id", ApiAuth, EmployeeController.getById);
 router.get("/employee-view/:id", ApiAuth, EmployeeController.view);
 router.post("/create-employee", upload.single('profile_img'), ApiAuth, EmployeeController.create);
 router.get("/remove-employee/:id", ApiAuth, EmployeeController.remove);
+router.patch("/update-profile/:id", ApiAuth, EmployeeController.update);
 
 router.post("/save-holiday", ApiAuth, HolidayController.create);
 router.get("/holidays", ApiAuth, HolidayController.get);

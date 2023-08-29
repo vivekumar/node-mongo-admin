@@ -87,7 +87,7 @@ class LeaveController {
             // To calculate the no. of days between two dates
             //let toDate = new Date(leave_data.to_date).toISOString().substring(0, 10);
             //let fromDate1 = new Date(leave_data.from_date).toISOString().substring(0, 10);
-            if (leave_data.leave_type === 'Sort Leave') {
+            if (leave_data.leave_type === 'Short Leave') {
                 daysDiff = 0.5;
                 toDate = Moment(leave_data.to_date).format('LLL');
                 fromDate = Moment(leave_data.from_date).format('LLL');
@@ -167,7 +167,7 @@ class LeaveController {
             data.user_id = req.body.user_id;
             data.reason = reason;
 
-            if (leave_type === 'Sort Leave') {
+            if (leave_type === 'Short Leave') {
                 const fromDatetime = new Date(req.body.from_date);
                 const toDatetime = new Date(req.body.to_date);
                 let timeDiff = (fromDatetime - toDatetime) / 60000;
@@ -182,7 +182,7 @@ class LeaveController {
                 data.to_date = req.body.to_date;
             }
 
-            if (leave_type === 'Sort Leave' || leave_type === 'Half Day Leave') {
+            if (leave_type === 'Short Leave' || leave_type === 'Half Day Leave') {
                 toDate = Moment(req.body.to_date).format('LLL');
                 fromDate = Moment(req.body.from_date).format('LLL');
             } else {

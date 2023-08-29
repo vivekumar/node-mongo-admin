@@ -255,6 +255,60 @@ class EmployeeController {
         // Our register logic ends here
     }
 
+    static update = async (req, res) => {
+        let encryptedPassword; let roles; let path;
+        const uid = escapeHTML(req.params.id);
+        const oldPassword = await bcrypt.hash(req.body.oldPassword, 10);
+
+        // Our register logic starts here
+        try {
+
+            let user = await User.findOne({ _id: uid });
+            // let pass = user.password;
+            // return res.status(201).send({ pass, oldPassword });
+
+            //const { filename, path } = req.file;
+            // if (req.files) {
+            //     path = req.file.path.split('/').slice(1).join('/');
+            // }
+            // Save the image metadata and additional fields to the database            
+
+            // Validate user input
+            if (!(req.body.password)) {
+                return res.status(400).send("All input is required");
+            }
+
+            if (user && (await bcrypt.compare(req.body.oldPassword, user.password))) {
+
+                let update_data = {};
+                //update_data.first_name = first_name;
+                //update_data.last_name = last_name;
+                //update_data.email = email.toLowerCase();
+
+                if (req.body.password) {
+                    encryptedPassword = await bcrypt.hash(req.body.password, 10);
+                    update_data.password = encryptedPassword;
+                }
+
+                // if (path) {
+                //     update_data.profile_img = path;
+                // }
+
+
+                const udata = await User.findByIdAndUpdate(uid, update_data);
+                return res.status(200).send(udata);
+            } else {
+                return res.status(201).send('password not match!');
+            }
+
+
+
+        } catch (err) {
+            return res.status(400).send(err);
+        }
+        // Our register logic ends here
+    }
+
     static remove = async (req, res) => {
         try {
             await Leave.deleteMany({ user_id: req.params.id });
