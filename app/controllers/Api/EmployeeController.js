@@ -149,16 +149,8 @@ class EmployeeController {
         }
     };
     static create = async (req, res) => {
-        let encryptedPassword; let roles; let path;
+        let encryptedPassword; let roles = []; let path;
         let login_user_role = await Role.findById(req.user.roles)
-        if (login_user_role === 'Admin') {
-            roles = [req.body.role]
-        } else {
-            const type = 'Employee';
-            const roleData = await Role.findOne({ name: type })
-            roles = [roleData._id]
-        }
-
 
         // Our register logic starts here
         try {
@@ -173,7 +165,7 @@ class EmployeeController {
             } = req.body;
 
             //const { filename, path } = req.file;
-            if (req.files) {
+            if (req.file) {
                 path = req.file.path.split('/').slice(1).join('/');
             }
             // Save the image metadata and additional fields to the database            
@@ -185,6 +177,9 @@ class EmployeeController {
 
             if (user_id) {
 
+                if (login_user_role.name === 'Admin') {
+                    roles[0] = req.body.role
+                }
                 let update_data = {};
                 update_data.first_name = first_name;
                 update_data.last_name = last_name;
@@ -215,8 +210,16 @@ class EmployeeController {
                 }
 
                 await User.findByIdAndUpdate(user_id, update_data);
-                return res.status(200).send('success');
+                return res.status(200).send('User Profile updated successfully');
             } else {
+
+                if (login_user_role.name === 'Admin') {
+                    roles = [req.body.role]
+                } else {
+                    const type = 'Employee';
+                    const roleData = await Role.findOne({ name: type })
+                    roles = [roleData._id]
+                }
                 // check if user already exist
                 // Validate if user exist in our database
                 const oldUser = await User.findOne({ email });
@@ -244,7 +247,7 @@ class EmployeeController {
                     roles
                 });
                 // return new user
-                return res.status(200).send(user);
+                return res.status(200).send('User Created Successfully');
             }
 
 
@@ -298,7 +301,7 @@ class EmployeeController {
                 const udata = await User.findByIdAndUpdate(uid, update_data);
                 return res.status(200).send(udata);
             } else {
-                return res.status(201).send('password not match!');
+                return res.status(204).send('Old password not match!');
             }
 
 
