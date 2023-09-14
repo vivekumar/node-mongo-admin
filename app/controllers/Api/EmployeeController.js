@@ -15,7 +15,7 @@ class EmployeeController {
             const currentMonth = Number(req.query.month) + 1;
             //const currentMonth = Number(req.params.month) + 1;
             //const currentMonth = new Date().getMonth() + 1;            
-            const currentYear = new Date().getFullYear();
+            const currentYear = Number(req.query.year);
             /*const data = await User.aggregate([
                 {
                     $lookup: {
@@ -86,6 +86,7 @@ class EmployeeController {
                         last_name: 1,
                         email: 1,
                         phone: 1,
+                        join_data: 1,
                         emp_id: 1,
                         designation: { $arrayElemAt: ['$designationInfo.name', 0] }, // Assuming 'name' is the field in 'designations'
                         department: { $arrayElemAt: ['$departmentInfo.name', 0] }, // Assuming 'name' is the field in 'departments'
@@ -122,6 +123,20 @@ class EmployeeController {
         const uid = escapeHTML(req.params.id);
         try {
             const data = await User.findById(uid);
+            //const data = await User.find((user) => user.id == uid);
+            if (data) {
+                return res.status(200).send(data);
+            } else {
+                return res.status(404).send("Data not found...!");
+            }
+        } catch (error) {
+            return res.status(404).send(error);
+        }
+    };
+    static getLeaveById = async (req, res) => {
+        const uid = escapeHTML(req.params.id);
+        try {
+            const data = await User.findById(uid).select('leaves');
             //const data = await User.find((user) => user.id == uid);
             if (data) {
                 return res.status(200).send(data);
